@@ -1,6 +1,7 @@
 import React from 'react';
 import requestMethod from '../javascript/utils';
 import Dropdown from '../Dropdown/Dropdown';
+import Checkbox from '../Checkbox/Checkbox';
 
 class Layout extends React.Component {
   constructor(props) {
@@ -8,6 +9,7 @@ class Layout extends React.Component {
     
     this.state = {
       planetsArray:[],
+      VehiclesArray:[],
       selectPlanets: 4
     }
     
@@ -17,30 +19,47 @@ class Layout extends React.Component {
   
   componentDidMount() {
     this.getPlanetsData();
+    this.getVehiclesData();
   }
   
   getPlanetsData() {
+    console.log('hello',priyanka);
+    let priyanka = 'hfdjfh';
     var fetchPlanets = requestMethod("GET", "https://findfalcone.herokuapp.com/planets");
     fetchPlanets.then((response) => { 
      this.setState({planetsArray: JSON.parse(response)});
     });
    }
    
+   getVehiclesData() {
+     var fetchPlanets = requestMethod("GET", "https://findfalcone.herokuapp.com/vehicles");
+     fetchPlanets.then((response) => { 
+      this.setState({VehiclesArray: JSON.parse(response)});
+     });
+   }
    
+   layoutGenerator() {
+     let layout = [];
+     for(var i=0; i < this.state.selectPlanets; i++) {
+      layout.push(<div className="select-planet">
+                    {this.getDropdownComponent(this.state.planetsArray)}
+                    <Checkbox VehiclesArray={this.state.VehiclesArray} />
+                    </div>);
+      }
+        
+      return layout;
+   }
+      
    getDropdownComponent(planetsArray) {
      let dropdown = [];
-     for(var i = 0; i < this.state.selectPlanets; i++) {
         dropdown.push(<Dropdown planets={planetsArray} />);
-     }
      return dropdown;
    }
   
   render() {
     return(
-      <div className="layout-conatiner">
-        {this.getDropdownComponent(this.state.planetsArray)}
-        <div className="">
-        </div>
+      <div className="select-planet-container">
+        { this.layoutGenerator() }
       </div>
     );
   }
